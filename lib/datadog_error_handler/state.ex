@@ -24,8 +24,7 @@ defmodule DatadogErrorHandler.State do
   Creates a new state from the given configuration.
   """
   @spec new(Keyword.t()) ::
-          {:ok, t()}
-          | {:error, binary()}
+          t()
   def new(props) do
     %__MODULE__{
       statsd_pid: props[:pid],
@@ -39,7 +38,8 @@ defmodule DatadogErrorHandler.State do
   Applies given changes to the state.
   """
   @spec apply_changes(t(), Keyword.t()) ::
-          t()
+          {:ok, t()}
+          | {:error, binary()}
   def apply_changes(state = %__MODULE__{}, changeset \\ []) do
     changeset =
       changeset
