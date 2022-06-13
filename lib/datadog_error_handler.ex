@@ -1,2 +1,1 @@
-defmodule DatadogErrorHandler do
-end
+defmodule DatadogErrorHandler, do: nil
