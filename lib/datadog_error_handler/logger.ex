@@ -12,13 +12,13 @@ defmodule DatadogErrorHandler.Logger do
 
   @impl true
   def init(_opts) do
-    {:ok, state} =
-      Application.get_env(:logger, :datadog_error_handler)
-      |> State.new()
-
-    case get_or_start_statsd_pid(state) do
-      {:ok, pid} -> {:ok, State.apply_changes(state, statsd_pid: pid)}
-      error -> error
+    with config <- Application.get_env(:logger, :datadog_error_handler),
+         state <- State.new(config),
+         {:ok, pid} <- get_or_start_statsd_pid(state),
+         {:ok, state} <- State.apply_changes(state, statsd_pid: pid) do
+      {:ok, state}
+    else
+      {:error, _reason} -> {:error, :no_start}
     end
   end
 
