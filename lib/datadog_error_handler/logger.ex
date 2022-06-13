@@ -14,7 +14,7 @@ defmodule DatadogErrorHandler.Logger do
   def init(_opts) do
     with config <- Application.get_env(:logger, :datadog_error_handler),
          state <- State.new(config),
-         {:ok, pid} <- get_or_start_statsd_pid(state),
+         {:ok, pid} <- get_pid(state),
          {:ok, state} <- State.apply_changes(state, statsd_pid: pid) do
       {:ok, state}
     else
@@ -73,9 +73,11 @@ defmodule DatadogErrorHandler.Logger do
   @impl true
   def handle_info(_info, state), do: {:ok, state}
 
-  defp get_or_start_statsd_pid(%State{statsd_pid: pid}) when is_pid(pid),
-    do: {:ok, pid}
+  defp get_pid(%State{statsd_pid: pid}) when is_pid(pid), do: {:ok, pid}
 
-  defp get_or_start_statsd_pid(%State{statsd_host: host, statsd_port: port}) when is_port(port),
-    do: DogStatsd.new(host, port)
+  defp get_pid(%State{statsd_host: host, statsd_port: port})
+       when is_binary(host) and is_integer(port),
+       do: DogStatsd.new(host, port)
+
+  defp get_pid(%State{}), do: {:error, :bad_config}
 end
