@@ -4,13 +4,13 @@ defmodule DatadogErrorHandler.MixProject do
   """
   use Mix.Project
 
-  @version "0.1.1"
+  @version "0.1.0"
 
   def project do
     [
       app: :datadog_error_handler,
       version: @version,
-      elixir: "~> 1.13.4",
+      elixir: "~> 1.13",
       start_permanent: Mix.env() == :prod,
       docs: docs(),
       deps: deps()
